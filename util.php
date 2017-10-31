@@ -117,4 +117,44 @@ function pdo() {
 	$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	return $pdo;
 }
+
+if (!defined("JSON_UNESCAPED_SLASHES")) {
+        define("JSON_UNESCAPED_SLASHES", 64);
+}
+
+if (!defined("JSON_PRETTY_PRINT")) {
+        define("JSON_PRETTY_PRINT", 128);
+}
+
+if (!defined("JSON_UNESCAPED_UNICODE")) {
+        define("JSON_UNESCAPED_UNICODE", 256);
+}
+
+if (!function_exists('getimagesizefromstring')) {
+    function getimagesizefromstring($str) {
+        $uri = 'data://application/octet-stream;base64,' . base64_encode($str);
+        return getimagesize($uri);
+    }
+}
+
+function table_dump($tt) {
+    // echo count($tt) . "," . count($tt[0]);
+    echo "<table border=1>";
+    for ($j = 0; $j < count($tt); $j++) {
+        if ($j == 0) {
+            echo "<tr>";
+            for ($i = 0; $i < count($tt[$j]); $i++) {
+	        echo "<th>$i</th>";
+            }
+            echo "</tr>";
+        }
+        echo "<tr>";
+        $r = $tt[$j];
+        for ($i = 0; $i < count($r); $i++) {
+            echo "<td>" . $r[$i] . "</td>";
+        }
+        echo "</tr>";
+    }
+    echo "</table>";
+}
 ?>
