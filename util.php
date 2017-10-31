@@ -157,4 +157,42 @@ function table_dump($tt) {
     }
     echo "</table>";
 }
+
+$__xhr = false;
+$__cli = php_sapi_name() == "cli";
+
+if (!$__cli && isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+        strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === "xmlhttprequest") {
+        $__xhr = true;
+} else
+if (!$__cli && $_SERVER["HTTP_ACCEPT"] == "application/json" ||
+        $_SERVER["HTTP_ACCEPT"] == "application/xml" ||
+        $_SERVER["HTTP_ACCEPT"] == "text/xml") {
+        $__xhr = true;
+}
+
+if (!$__cli && !$__xhr) {
+        header("Content-Type: text/html; charset=UTF-8");
+}
+
+function out_error_log($s) {
+    global $__xhr, $__cli;
+    // echo "xhr: $__xhr, cli: $__cli, accept: " . $_SERVER["HTTP_ACCEPT"] . "<br>";
+    if (!$__xhr && !$__cli) {
+        error_log($s);
+        echo $s;
+        // Force flush -> emit 512 bytes
+        echo "<!-- ";
+        for ($i = 0; $i < 512; $i++) echo rand(0, 256);
+        echo " -->\n";
+	echo "<br>\n";
+        flush();
+    } else {
+        error_log(strftime("%Y-%m-%d %H:%M:%S") . " " . $s);
+    }
+
+    if (function_exists("out_mongo_log")) {
+	out_mongo_log($s);
+    }
+}
 ?>
